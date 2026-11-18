@@ -6,12 +6,6 @@ small, deterministic engine decides what counts: every job is bounded, every sta
 ledgered, and a finding only moves up the evidence ladder when its mechanical facts have been
 reproduced independently of the model that proposed it.
 
-This repository is the generic core of DSR. It contains no targets, no findings and no
-target-specific prompts.
-
-**Status: research prototype.** It runs and is tested, but interfaces change without notice and
-nothing here is hardened for multi-user or hostile environments.
-
 ## What is in here
 
 | Part | Where | What it does |
@@ -163,7 +157,7 @@ Reference documentation:
 ## Names you will meet in the code
 
 - **REFALL Lite**: the state engine. It is a clean-room, standard-library reimplementation of the
-  state layer of a larger internal system (REFALL), which is not part of this release.
+  state layer of a larger system (REFALL), which is not part of this release.
 - **ArcticBase**: the name of that state layer.
 - **Hermes**: the supervisor role, the actor that enqueues work and triages requests. Any operator
   or agent can play it.
