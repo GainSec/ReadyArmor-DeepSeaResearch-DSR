@@ -1,0 +1,4 @@
+# Deliberately fake AWS-format access key used only as a redaction canary by the tests.
+# It is not a real credential and never reaches an external service.
+tests/test_retry.py:aws-access-token:134
+tests/test_retry.py:aws-access-token:138

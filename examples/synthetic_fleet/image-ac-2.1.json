@@ -1,0 +1,29 @@
+{
+ "family": "acme-cam",
+ "image_sha256": "fa756da62be2f55458143602ed0af61018fd8dcccfeeecc3c5c65a14bff42e37",
+ "members": [
+  {
+   "kind": "elf",
+   "path": "/bin/busybox",
+   "sha256": "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3",
+   "size_bytes": 1048576
+  },
+  {
+   "kind": "elf",
+   "path": "/usr/sbin/httpd",
+   "sha256": "6f4002441972ca25013405ee907ec81fb8dd810cd76d881551a0a6630cdde841",
+   "size_bytes": 204800
+  },
+  {
+   "kind": "elf",
+   "path": "/usr/bin/rtspd",
+   "sha256": "e3aa112b7b9ecae28a1cf2f20421872cf21446c74d254d7a3971f34964f6ee17",
+   "size_bytes": 102912
+  }
+ ],
+ "metadata": {
+  "note": "synthetic fixture; not a real firmware image"
+ },
+ "name": "ac-2.1",
+ "synthetic": true
+}

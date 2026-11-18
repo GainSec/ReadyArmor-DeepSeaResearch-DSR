@@ -1,0 +1,57 @@
+{
+ "members": {
+  "2f0feaeec342937d4d799564c809f5eeefb7be70356d1267e938086047bdfd8f": {
+   "kind": "elf",
+   "label": "rtspd-acme-1.0",
+   "size_bytes": 102400,
+   "synthetic_strings": [
+    "RTSP/1.0",
+    "SYNTH_DEBUG_BANNER"
+   ]
+  },
+  "3e9a8858fb32bbdfc7c342b15e81c4fada776e0d42489876292204ffba094c89": {
+   "kind": "so",
+   "label": "libcrypto-sim-3",
+   "size_bytes": 3145728,
+   "synthetic_strings": [
+    "synthetic crypto lib"
+   ]
+  },
+  "6f4002441972ca25013405ee907ec81fb8dd810cd76d881551a0a6630cdde841": {
+   "kind": "elf",
+   "label": "httpd-acme-3.2",
+   "size_bytes": 204800,
+   "synthetic_strings": [
+    "Authorization: Basic",
+    "SYNTH_DEFAULT_CRED=admin:admin",
+    "/cgi-bin/"
+   ]
+  },
+  "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3": {
+   "kind": "elf",
+   "label": "busybox-1.36",
+   "size_bytes": 1048576,
+   "synthetic_strings": [
+    "BusyBox v1.36 (synthetic)"
+   ]
+  },
+  "bbc8cc20dc5c17fe3bdb1c964a54e0c236cc218e2b37c62edf65bdd1624d1eb0": {
+   "kind": "script",
+   "label": "rcS-router",
+   "size_bytes": 2048,
+   "synthetic_strings": [
+    "#!/bin/sh",
+    "httpd -p 80"
+   ]
+  },
+  "e3aa112b7b9ecae28a1cf2f20421872cf21446c74d254d7a3971f34964f6ee17": {
+   "kind": "elf",
+   "label": "rtspd-acme-1.1",
+   "size_bytes": 102912,
+   "synthetic_strings": [
+    "RTSP/1.0"
+   ]
+  }
+ },
+ "synthetic": true
+}

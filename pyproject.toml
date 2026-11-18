@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "refall-lite"
+version = "0.2.0"
+description = "Deep Sea Research (DSR): REFALL Lite bounded campaign state, evidence gates and the model-driven vulnerability hunt pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "GainSec" }]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+refall-lite = "refall_lite.cli:main"
+fwspider-telemetry = "fwspider_telemetry.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["refall_lite", "fwspider_telemetry"]
+
+[tool.hatch.build.targets.sdist]
+include = ["refall_lite", "fwspider_telemetry", "tests", "examples", "scripts", "docs", "*.md", "EVENT-SCHEMA.json", "LICENSE*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not live'"
+markers = ["live: real model endpoint + opencode + REA end-to-end (run with -m live)"]

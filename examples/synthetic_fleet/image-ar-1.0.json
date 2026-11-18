@@ -1,0 +1,29 @@
+{
+ "family": "acme-router",
+ "image_sha256": "2a0a9ce54b9d9900a4376d69c48239e47e630016c90130239c1bbff03420f135",
+ "members": [
+  {
+   "kind": "elf",
+   "path": "/bin/busybox",
+   "sha256": "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3",
+   "size_bytes": 1048576
+  },
+  {
+   "kind": "elf",
+   "path": "/usr/sbin/httpd",
+   "sha256": "6f4002441972ca25013405ee907ec81fb8dd810cd76d881551a0a6630cdde841",
+   "size_bytes": 204800
+  },
+  {
+   "kind": "script",
+   "path": "/etc/init.d/rcS",
+   "sha256": "bbc8cc20dc5c17fe3bdb1c964a54e0c236cc218e2b37c62edf65bdd1624d1eb0",
+   "size_bytes": 2048
+  }
+ ],
+ "metadata": {
+  "note": "synthetic fixture; not a real firmware image"
+ },
+ "name": "ar-1.0",
+ "synthetic": true
+}

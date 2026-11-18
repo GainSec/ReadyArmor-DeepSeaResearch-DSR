@@ -1,0 +1,23 @@
+{
+ "family": "cam",
+ "image_sha256": "2fefb7a366e319b31772863602ceb1f5b9225b5d328e5e7f191243dc412f22c7",
+ "members": [
+  {
+   "kind": "elf",
+   "path": "/usr/bin/httpd",
+   "sha256": "5edceab68451340a9f61d79d1c5a20670ca6e2ba47eeebb859656d93365367f1",
+   "size_bytes": 203776
+  },
+  {
+   "kind": "elf",
+   "path": "/usr/bin/rtspd",
+   "sha256": "f24ac73b27d6537ade4f19a9b9e6eb9504450c5778538f172cb3b91180b91d05",
+   "size_bytes": 102400
+  }
+ ],
+ "metadata": {
+  "note": "synthetic fixture; not a real firmware image"
+ },
+ "name": "lc-2.0",
+ "synthetic": true
+}

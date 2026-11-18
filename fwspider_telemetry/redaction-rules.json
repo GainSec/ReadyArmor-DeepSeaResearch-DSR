@@ -1,0 +1,141 @@
+{
+ "schema_version": "fwspider.redaction-rules.v1",
+ "replacement": "[REDACTED]",
+ "description": "Shared by fwspider_telemetry (Python) and fwspider-telemetry.mjs (Node). Regexes use the common subset of Python re and JavaScript RegExp; flags are given separately. 'keep' lists capture groups preserved around the redacted value; an empty keep list replaces the whole match.",
+ "string_rules": [
+  {
+   "name": "private_key_block",
+   "pattern": "-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----[\\s\\S]*?(?:-----END [A-Z0-9 ]*PRIVATE KEY-----|$)",
+   "flags": "",
+   "keep": []
+  },
+  {
+   "name": "aws_access_key_id",
+   "pattern": "\\b(?:AKIA|ASIA)[0-9A-Z]{16}\\b",
+   "flags": "",
+   "keep": []
+  },
+  {
+   "name": "vendor_token_format",
+   "pattern": "\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|hf_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35}|glpat-[A-Za-z0-9_-]{20,})",
+   "flags": "",
+   "keep": []
+  },
+  {
+   "name": "jwt",
+   "pattern": "\\beyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}",
+   "flags": "",
+   "keep": []
+  },
+  {
+   "name": "authorization_header",
+   "pattern": "((?:proxy-)?authorization[\"']?\\s*[:=]\\s*[\"']?(?:(?:bearer|basic|token|digest|negotiate|apikey)\\s+)?)([^\\s\"',;]+)",
+   "flags": "i",
+   "keep": [
+    1
+   ]
+  },
+  {
+   "name": "bearer_token",
+   "pattern": "(\\bbearer\\s+)([A-Za-z0-9._~+/=-]{6,})",
+   "flags": "i",
+   "keep": [
+    1
+   ]
+  },
+  {
+   "name": "cookie_header",
+   "pattern": "((?:set-)?cookie[\"']?\\s*[:=]\\s*[\"']?)([^\\r\\n\"']+)",
+   "flags": "i",
+   "keep": [
+    1
+   ]
+  },
+  {
+   "name": "url_userinfo_password",
+   "pattern": "([a-z][a-z0-9+.-]*://[^\\s/:@]+:)([^\\s/@]+)(@)",
+   "flags": "i",
+   "keep": [
+    1,
+    3
+   ]
+  },
+  {
+   "name": "cli_secret_flag",
+   "pattern": "(--?(?:password|passwd|pass|pwd|secret|client[_-]?secret|token|api[_-]?key|apikey|access[_-]?token|auth[_-]?token|cookie|authorization|private[_-]?key)(?:=|\\s+))([^\\s\"']+)",
+   "flags": "i",
+   "keep": [
+    1
+   ]
+  },
+  {
+   "name": "secret_key_value",
+   "pattern": "([\"']?\\b(?:password|passwd|passphrase|pwd|secret|client_secret|api[_-]?key|apikey|access[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token|refresh[_-]?token|id[_-]?token|session[_-]?id|token|private[_-]?key|otp|verification[_-]?code|mfa[_-]?code|cvv|cvc)\\b[\"']?\\s*[:=]\\s*[\"']?)([^\\s\"',;&}]+)",
+   "flags": "i",
+   "keep": [
+    1
+   ]
+  },
+  {
+   "name": "payment_card_number",
+   "pattern": "\\b(?:4\\d{3}|5[1-5]\\d{2}|3[47]\\d{2}|6011)(?:[ -]?\\d{4}){2,3}(?:[ -]?\\d{1,4})?\\b",
+   "flags": "",
+   "keep": [],
+   "luhn": true
+  }
+ ],
+ "sensitive_key_pattern": "(^|_)(password|passwd|passphrase|pwd|secret|client_secret|api_key|apikey|access_key|secret_key|access_token|auth_token|refresh_token|id_token|token|authorization|proxy_authorization|cookie|cookies|set_cookie|session_id|sessionid|private_key|credential|credentials|otp|verification_code|mfa_code|cvv|cvc|card_number|connection_string|dsn|signature)$",
+ "sensitive_key_normalization": "lowercase; '-' and '.' and ' ' -> '_'; leading dashes stripped",
+ "non_secret_keys": [
+  "token_count",
+  "tokens",
+  "prompt_tokens",
+  "completion_tokens",
+  "total_tokens",
+  "max_tokens",
+  "input_tokens",
+  "output_tokens",
+  "cached_tokens",
+  "token_usage",
+  "tokens_in",
+  "tokens_out",
+  "request_sha256",
+  "response_sha256",
+  "secret_canary_test",
+  "redaction"
+ ],
+ "env_allowlist": [
+  "HOME",
+  "USER",
+  "LOGNAME",
+  "SHELL",
+  "LANG",
+  "LC_ALL",
+  "TZ",
+  "PWD",
+  "PATH",
+  "PYTHONPATH",
+  "VIRTUAL_ENV",
+  "NODE_ENV",
+  "TERM",
+  "TMPDIR",
+  "REFALL_LITE_DB",
+  "FIRMWARE_SPIDER_LOG_DIR",
+  "FIRMWARE_SPIDER_HOME",
+  "FIRMWARE_SPIDER_PROFILE",
+  "FIRMWARE_SPIDER_RUN_ID",
+  "FIRMWARE_SPIDER_PARENT_EVENT_ID",
+  "FIRMWARE_SPIDER_CAMPAIGN_ID",
+  "FIRMWARE_SPIDER_JOB_ID",
+  "FIRMWARE_SPIDER_TOOL_CALL_ID",
+  "FIRMWARE_SPIDER_MODEL_CALL_ID",
+  "FIRMWARE_SPIDER_DEBUG",
+  "FIRMWARE_SPIDER_TELEMETRY_POLICY",
+  "FIRMWARE_SPIDER_LOG_BODIES"
+ ],
+ "binary_preview_bytes": 64,
+ "case_sensitive_non_secret_keys": [
+  "PWD",
+  "OLDPWD"
+ ]
+}

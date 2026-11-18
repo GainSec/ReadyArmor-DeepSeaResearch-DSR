@@ -1,0 +1,416 @@
+{
+ "batches": [
+  {
+   "content_sha256": "33d05aee58480b0511a05e7ebcb0bf70c30ecfad27ff960f75ce22878371369d",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "isa",
+     "value": "mips32"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "compiler",
+     "value": "gcc-9.3"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "package_version",
+     "value": "acme-httpd@3.2"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "function_hashes",
+     "value": [
+      "synthfn_000",
+      "synthfn_001",
+      "synthfn_002",
+      "synthfn_003",
+      "synthfn_004",
+      "synthfn_005",
+      "synthfn_006",
+      "synthfn_007",
+      "synthfn_008",
+      "synthfn_009",
+      "synthfn_010",
+      "synthfn_011",
+      "synthfn_012",
+      "synthfn_013",
+      "synthfn_014",
+      "synthfn_015",
+      "synthfn_016",
+      "synthfn_017",
+      "synthfn_018",
+      "synthfn_019"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "source_paths",
+     "value": [
+      "src/httpd/main.c",
+      "src/httpd/auth.c",
+      "src/httpd/upload.c"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "version_string",
+     "value": "acme-httpd 3.2 (buildA)"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "behavioral_role",
+     "value": "web_handler"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "9d43f5826da240bf02455457ff8d8d550567e5e190572099d8cc3841b0c05c19",
+      "scope": "code:parse_auth"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "c7276c2ab6d3fcdc56ba7462dc1c652dc083e29109c5a3fd9096b13bda6e38f9",
+      "scope": "code:upload_handler"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "8f7b214ad2d68632023c89e5da15de90d56fcb38a44b178e7a8ca5efcad51300",
+      "scope": "config:httpd.conf"
+     }
+    }
+   ]
+  },
+  {
+   "content_sha256": "f02dc16e8741a7e37859349cacb4b75acad702281a38eb1e258005bcc5f0b91c",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "isa",
+     "value": "mips32"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "compiler",
+     "value": "gcc-9.3"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "package_version",
+     "value": "acme-httpd@3.2"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "function_hashes",
+     "value": [
+      "synthfn_001",
+      "synthfn_002",
+      "synthfn_003",
+      "synthfn_004",
+      "synthfn_005",
+      "synthfn_006",
+      "synthfn_007",
+      "synthfn_008",
+      "synthfn_009",
+      "synthfn_010",
+      "synthfn_011",
+      "synthfn_012",
+      "synthfn_013",
+      "synthfn_014",
+      "synthfn_015",
+      "synthfn_016",
+      "synthfn_017",
+      "synthfn_018",
+      "synthfn_019",
+      "synthfn_B"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "source_paths",
+     "value": [
+      "src/httpd/main.c",
+      "src/httpd/auth.c",
+      "src/httpd/upload.c"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "version_string",
+     "value": "acme-httpd 3.2 (buildB)"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "behavioral_role",
+     "value": "web_handler"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "9d43f5826da240bf02455457ff8d8d550567e5e190572099d8cc3841b0c05c19",
+      "scope": "code:parse_auth"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "c7276c2ab6d3fcdc56ba7462dc1c652dc083e29109c5a3fd9096b13bda6e38f9",
+      "scope": "code:upload_handler"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "8f7b214ad2d68632023c89e5da15de90d56fcb38a44b178e7a8ca5efcad51300",
+      "scope": "config:httpd.conf"
+     }
+    }
+   ]
+  },
+  {
+   "content_sha256": "5edceab68451340a9f61d79d1c5a20670ca6e2ba47eeebb859656d93365367f1",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "isa",
+     "value": "mips32"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "compiler",
+     "value": "gcc-9.3"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "package_version",
+     "value": "acme-httpd@3.2"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "function_hashes",
+     "value": [
+      "synthfn_000",
+      "synthfn_001",
+      "synthfn_002",
+      "synthfn_003",
+      "synthfn_004",
+      "synthfn_005",
+      "synthfn_006",
+      "synthfn_007",
+      "synthfn_008",
+      "synthfn_009",
+      "synthfn_010",
+      "synthfn_011",
+      "synthfn_012",
+      "synthfn_013",
+      "synthfn_014",
+      "synthfn_015",
+      "synthfn_016",
+      "synthfn_017",
+      "synthfn_018",
+      "synthfn_C"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "source_paths",
+     "value": [
+      "src/httpd/main.c",
+      "src/httpd/auth.c",
+      "src/httpd/upload.c"
+     ]
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "version_string",
+     "value": "acme-httpd 3.2 (buildC)"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "behavioral_role",
+     "value": "web_handler"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "dc73069b2b353ebc7334326dd9776284ebede5ce40d27f20f8348eacec4619e9",
+      "scope": "code:parse_auth"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "c7276c2ab6d3fcdc56ba7462dc1c652dc083e29109c5a3fd9096b13bda6e38f9",
+      "scope": "code:upload_handler"
+     }
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "scoped_digest",
+     "value": {
+      "digest": "da39e765a259cf9db13695bb857b7093153d0cf65f7a654cab09e81326e88dcf",
+      "scope": "config:httpd.conf"
+     }
+    }
+   ]
+  },
+  {
+   "content_sha256": "f24ac73b27d6537ade4f19a9b9e6eb9504450c5778538f172cb3b91180b91d05",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "isa",
+     "value": "mips32"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "compiler",
+     "value": "gcc-9.3"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "package_name",
+     "value": "rtspd"
+    }
+   ]
+  },
+  {
+   "content_sha256": "c6a6895f440f2ad1ee97db02e226f897af4049317358d2cab167f44eaff1a49a",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "isa",
+     "value": "mips32"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "compiler",
+     "value": "gcc-9.3"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "function_hashes",
+     "value": [
+      "synthfn_000",
+      "synthfn_001",
+      "synthfn_002",
+      "synthfn_003",
+      "synthfn_004",
+      "synthfn_005",
+      "synthfn_006",
+      "synthfn_007",
+      "synthfn_008",
+      "synthfn_009",
+      "synthfn_010",
+      "synthfn_011",
+      "synthfn_012",
+      "synthfn_013",
+      "synthfn_014",
+      "synthfn_015",
+      "synthfn_016",
+      "synthfn_017",
+      "synthfn_018",
+      "synthfn_W"
+     ]
+    }
+   ]
+  },
+  {
+   "content_sha256": "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3",
+   "observations": [
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "language",
+     "value": "C"
+    },
+    {
+     "analyzer": "synthetic-fingerprinter",
+     "analyzer_version": "1.0",
+     "kind": "build_id",
+     "value": "synthetic-bb-buildid-01"
+    }
+   ]
+  }
+ ],
+ "synthetic": true
+}

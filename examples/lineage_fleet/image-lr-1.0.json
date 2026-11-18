@@ -1,0 +1,23 @@
+{
+ "family": "router",
+ "image_sha256": "0c3c739afa161144eb746a39214142eabe79115c6d8dd48597ddddc1dd356b2f",
+ "members": [
+  {
+   "kind": "elf",
+   "path": "/usr/sbin/httpd",
+   "sha256": "33d05aee58480b0511a05e7ebcb0bf70c30ecfad27ff960f75ce22878371369d",
+   "size_bytes": 204800
+  },
+  {
+   "kind": "elf",
+   "path": "/bin/busybox",
+   "sha256": "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3",
+   "size_bytes": 1048576
+  }
+ ],
+ "metadata": {
+  "note": "synthetic fixture; not a real firmware image"
+ },
+ "name": "lr-1.0",
+ "synthetic": true
+}

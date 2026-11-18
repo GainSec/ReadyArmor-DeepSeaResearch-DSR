@@ -1,0 +1,54 @@
+{
+ "members": {
+  "33d05aee58480b0511a05e7ebcb0bf70c30ecfad27ff960f75ce22878371369d": {
+   "kind": "elf",
+   "label": "httpd-3.2-buildA",
+   "size_bytes": 204800,
+   "synthetic_strings": [
+    "SYNTH_DEFAULT_CRED=admin:admin",
+    "/cgi-bin/"
+   ]
+  },
+  "5edceab68451340a9f61d79d1c5a20670ca6e2ba47eeebb859656d93365367f1": {
+   "kind": "elf",
+   "label": "httpd-3.2-buildC",
+   "size_bytes": 203776,
+   "synthetic_strings": [
+    "/cgi-bin/"
+   ]
+  },
+  "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3": {
+   "kind": "elf",
+   "label": "busybox-1.36",
+   "size_bytes": 1048576,
+   "synthetic_strings": [
+    "BusyBox v1.36 (synthetic)"
+   ]
+  },
+  "c6a6895f440f2ad1ee97db02e226f897af4049317358d2cab167f44eaff1a49a": {
+   "kind": "elf",
+   "label": "webd-0.9",
+   "size_bytes": 99000,
+   "synthetic_strings": [
+    "webd"
+   ]
+  },
+  "f02dc16e8741a7e37859349cacb4b75acad702281a38eb1e258005bcc5f0b91c": {
+   "kind": "elf",
+   "label": "httpd-3.2-buildB",
+   "size_bytes": 205312,
+   "synthetic_strings": [
+    "/cgi-bin/"
+   ]
+  },
+  "f24ac73b27d6537ade4f19a9b9e6eb9504450c5778538f172cb3b91180b91d05": {
+   "kind": "elf",
+   "label": "rtspd-1.0",
+   "size_bytes": 102400,
+   "synthetic_strings": [
+    "RTSP/1.0"
+   ]
+  }
+ },
+ "synthetic": true
+}

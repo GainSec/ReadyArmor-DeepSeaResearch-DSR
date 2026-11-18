@@ -1,0 +1,167 @@
+{
+ "name": "dsr_hunt_advisory_pack",
+ "version": "1.0",
+ "description": "Advisory vuln-hunting ideas for the DSR live hunt (NOT a sealed/source-backed pack). Priority-ordered. Only leading methods surface to the agent as OPTIONAL ideas; methodology is not restricted.",
+ "validator_bindings": [],
+ "alphabets": [
+  {
+   "name": "dsr_hunt_ideas",
+   "description": "generic firmware vuln-hunting methodology, priority-ordered",
+   "schema": {
+    "fields": [
+     {
+      "name": "applicability",
+      "type": "str"
+     },
+     {
+      "name": "evidence_requirements",
+      "type": "list[str]"
+     },
+     {
+      "name": "id",
+      "type": "str"
+     },
+     {
+      "name": "label",
+      "type": "str"
+     },
+     {
+      "name": "limitations",
+      "type": "str"
+     },
+     {
+      "name": "ordered_steps",
+      "type": "list[str]"
+     },
+     {
+      "name": "reproduction_gate",
+      "type": "str"
+     },
+     {
+      "name": "source_summary",
+      "type": "str"
+     }
+    ]
+   },
+   "shape": "categorical",
+   "starter": [
+    {
+     "applicability": "Any firmware binary that may pass externally-influenced strings to a shell or command executor: web/CGI handlers, service daemons, update/diagnostic/management utilities.",
+     "evidence_requirements": [
+      "Decompiled or disassembled call site of a command-executing function (system, popen, execl/execle/execlp, execv/execve/execvp, do_system, twsystem, ___system, or a vendor wrapper).",
+      "A concrete data path (xrefs / call path) from an untrusted input source to the command-string argument.",
+      "Pseudocode showing that sanitization/escaping between source and sink is absent, insufficient, or bypassable."
+     ],
+     "id": "dsrhunt_command_injection_sink_tracing",
+     "label": "Trace externally-influenced input into command-execution sinks (priority tier 1: remote command/code execution)",
+     "limitations": "Static reachability does not prove runtime exploitability; a path may be gated by callers, authentication, or input constraints not visible in one procedure. Treat as a hypothesis until a deterministic tool corroborates the path.",
+     "ordered_steps": [
+      "Enumerate command-execution sinks: search_strings and list_procedures for system, popen, execve, execl, execlp, execvp, do_system, twsystem, ___system, '/bin/sh', 'sh -c'; record each call site with find_xrefs_to_name.",
+      "For each sink, read procedure_pseudo_code and identify the exact argument that becomes the command string.",
+      "Walk backwards with build_call_path and xrefs from that argument toward its origins (function parameters, globals, NVRAM/config getters, recv/read buffers, CGI getenv of QUERY_STRING/HTTP_* ).",
+      "Decide whether any reachable origin is externally influenced (network request field, uploaded/parsed file content, environment set by a request handler, UART/console).",
+      "Inspect intervening code for sanitization (whitelist, metacharacter rejection, fixed-format snprintf); note any that is missing or bypassable.",
+      "If an untrusted source reaches the command string without adequate sanitization, record the source, the sink call-site address, the call-path edges, and the unsanitized shell-metacharacter opportunity."
+     ],
+     "reproduction_gate": "Requires the sink call-site address, the source->sink call path, and the surrounding pseudocode; promotion requires independent host-side corroboration of the path (re-derived xrefs / call-path / bytes), not model assertion.",
+     "source_summary": "Standard command-injection source-to-sink methodology (CWE-78) applied to embedded/firmware binaries; synthesized from common practitioner practice, not executed from a single source."
+    },
+    {
+     "applicability": "Any firmware component that reads data from outside the device or across a trust boundary (network, uploaded/received files, remotely-settable configuration, IPC).",
+     "evidence_requirements": [
+      "Identified input-reading call sites (network, file/ingest, environment, NVRAM, IPC) with xrefs.",
+      "For each, the destination buffer/variable that holds attacker-influenced data, tagged as a taint origin."
+     ],
+     "id": "dsrhunt_untrusted_input_source_enumeration",
+     "label": "Enumerate untrusted input sources and tag taint origins",
+     "limitations": "A source being present does not mean it is attacker-reachable; confirm the interface is exposed and the path is not auth-gated before relying on it downstream.",
+     "ordered_steps": [
+      "Network sources: find_xrefs_to_name for recv, recvfrom, read-on-socket, accept, and CGI/FastCGI getenv (QUERY_STRING, CONTENT_LENGTH, HTTP_*), plus web-server request structures.",
+      "File/ingest sources: fopen/open/fread/mmap of uploaded, received, or imported files, and archive/extraction/decompression routines.",
+      "Remotely-settable config sources: nvram_get/getenv/cfg_get whose values can be written through an exposed interface.",
+      "For each source, note the destination buffer and tag it as a taint origin for the sink-tracing and parser methods.",
+      "Prioritize sources reachable without authentication or before an auth check."
+     ],
+     "reproduction_gate": "Requires the source call-site addresses and the tainted destination buffers; this method feeds the sink-tracing and parser methods rather than producing a standalone finding.",
+     "source_summary": "Generic taint-source enumeration for firmware across network/file/config/IPC boundaries; synthesized practitioner methodology."
+    },
+    {
+     "applicability": "Code that parses data received, uploaded, imported, or extracted from an external source: protocol parsers, file/image/config parsers, decompressors, firmware-update handlers (priority tier 2: remote ingested input).",
+     "evidence_requirements": [
+      "The parser entry point and the untrusted buffer it consumes.",
+      "A length/count field from the input that drives a copy or index without validation against the destination size.",
+      "The specific copy or size-arithmetic operation that can overflow or under-validate."
+     ],
+     "id": "dsrhunt_ingested_data_parser_memory_safety",
+     "label": "Review parsers of ingested/received data for memory-safety violations (priority tier 2)",
+     "limitations": "Bounds that appear absent in one procedure may be enforced by a caller; confirm the full path. Exploitability depends on memory layout not fully recoverable statically.",
+     "ordered_steps": [
+      "Identify parser entry points from the input-source enumeration and from strings naming formats/protocols; read their procedure_pseudo_code.",
+      "Find unbounded or length-driven copies: strcpy, strcat, sprintf, memcpy/memmove with attacker-influenced length, stack buffers sized from input.",
+      "Check whether a length or count field read from the input controls a copy or index without validation against the destination size.",
+      "Look for integer overflow/sign-conversion issues in size computations feeding an allocation or copy.",
+      "Record the exact input offset/field, the vulnerable operation's address, and why validation is absent or insufficient."
+     ],
+     "reproduction_gate": "Requires the parser address, the unsafe operation's address, and the input field controlling it; promotion requires host-side corroboration of the bytes/call path.",
+     "source_summary": "Memory-safety review of untrusted parsers (CWE-120/CWE-787/CWE-190) in firmware; synthesized practitioner methodology."
+    },
+    {
+     "applicability": "Whole-firmware or service-binary review to determine what listens on the network or LAN and which handlers process untrusted input (priority tier 3: exposed services).",
+     "evidence_requirements": [
+      "Enumerated listeners/handlers: bind/listen ports, CGI/web routes, inetd/xinetd/init service registrations.",
+      "A mapping from each exposed entry to the binary/procedure that handles it, and whether it runs before authentication."
+     ],
+     "id": "dsrhunt_exposed_service_surface_mapping",
+     "label": "Map exposed network/LAN service surface and route untrusted input to handlers (priority tier 3)",
+     "limitations": "Presence of a listener does not confirm external reachability in deployment; record the assumption about network exposure (internet / LAN / auth-gated).",
+     "ordered_steps": [
+      "From the unpacked filesystem, read inittab, rcS/init scripts, inetd.conf/xinetd.d, service-manager units, and web-server configs (lighttpd/boa/mini_httpd/uhttpd) to list started services and listening ports.",
+      "In service binaries, find bind/listen/accept and CGI dispatch tables; map URL routes or command opcodes to handler procedures.",
+      "Mark which handlers run before authentication and which accept the largest or most-structured input.",
+      "Feed the highest-priority handlers into the command-injection and parser methods as starting points.",
+      "Record the exposed entry, its reachability (internet/LAN/auth-gated), and the handler address."
+     ],
+     "reproduction_gate": "Requires the service/handler addresses and the config evidence establishing exposure.",
+     "source_summary": "Attack-surface mapping for networked firmware services (OWASP FSTM surface mapping); synthesized practitioner methodology."
+    },
+    {
+     "applicability": "Exposed services and login/auth routines that may contain hardcoded credentials, backdoor accounts, or bypassable authentication.",
+     "evidence_requirements": [
+      "The auth/credential comparison site and the constant or logic involved.",
+      "The exposed entry that reaches it."
+     ],
+     "id": "dsrhunt_hardcoded_secret_and_auth_bypass",
+     "label": "Find hardcoded credentials, backdoors, and authentication bypasses in exposed services",
+     "limitations": "A constant string resembling a credential may be a provisioning default meant to be changed; distinguish a true backdoor from an initial default and state which.",
+     "ordered_steps": [
+      "search_strings for credential-like constants, backdoor markers, and tokens; find format strings for password/login/admin handling.",
+      "Locate password/token comparison routines (strcmp/memcmp against constants, custom hash checks) and read their pseudocode.",
+      "Identify logic that lets authentication be skipped: default-true flags, magic parameters, debug/engineering modes, off-by-one in length checks.",
+      "Confirm the routine is reachable from an exposed service entry.",
+      "Record the constant/logic, its address, and the reaching entry."
+     ],
+     "reproduction_gate": "Requires the comparison-site address, the constant bytes, and the exposed reaching path.",
+     "source_summary": "Hardcoded-credential and auth-bypass review for firmware (CWE-798/CWE-288/CWE-489); synthesized practitioner methodology."
+    },
+    {
+     "applicability": "Every confirmed hypothesis that will be submitted as a finding, to make it mechanically verifiable and promotable rather than a narrative claim.",
+     "evidence_requirements": [
+      "A structured claim carrying concrete, tool-re-derivable anchors: byte offsets, call-path edges, and xref lists."
+     ],
+     "id": "dsrhunt_finding_packaging_for_submission",
+     "label": "Package a finding so an independent tool can re-derive it (how to write it up)",
+     "limitations": "A finding without re-derivable anchors stays a model hypothesis and cannot be promoted; narrative alone is not evidence.",
+     "ordered_steps": [
+      "State the vulnerability class, the affected binary/member, and a one-line impact tied to a priority tier (remote command/code execution first).",
+      "Populate a structured claim object the host can re-derive mechanically: for each assertion include at least one of - read_bytes anchors as {offset, length, expected-hex}; build_call_path edges as [from_addr, to_addr]; xrefs as {from, target} lists.",
+      "Give the source->sink path explicitly: the untrusted source, the sink call-site address, and every intermediate edge.",
+      "State the exact reproduction gate: what a verifier must independently confirm (bytes at offsets, path edges) to raise the finding above a model hypothesis.",
+      "Submit via refall-submit with the claim object and evidence refs; do not assert verification yourself - leave promotion to an independent tool/human check."
+     ],
+     "reproduction_gate": "The claim must contain at least one non-empty, tool-re-derivable anchor (bytes, call-path edges, or xrefs); otherwise the finding is held.",
+     "source_summary": "DSR finding-packaging convention aligned to the independent-check promotion gate; synthesized for this harness."
+    }
+   ]
+  }
+ ]
+}

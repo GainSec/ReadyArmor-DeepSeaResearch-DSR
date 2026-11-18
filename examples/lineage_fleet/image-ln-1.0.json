@@ -1,0 +1,24 @@
+{
+ "family": "nas",
+ "image_sha256": "3bebe044a71604c388547b390554e3d9654827c3b467e89af1b07c6a071efa45",
+ "members": [
+  {
+   "kind": "elf",
+   "path": "/usr/sbin/webd",
+   "sha256": "c6a6895f440f2ad1ee97db02e226f897af4049317358d2cab167f44eaff1a49a",
+   "size_bytes": 99000
+  },
+  {
+   "kind": "elf",
+   "package": "busybox-1.36-r0",
+   "path": "/bin/busybox",
+   "sha256": "91cba96a13d6839be49d2252b25e82ec888269abc0feacec52b4a8847ebc5fc3",
+   "size_bytes": 1048576
+  }
+ ],
+ "metadata": {
+  "note": "synthetic fixture; not a real firmware image"
+ },
+ "name": "ln-1.0",
+ "synthetic": true
+}

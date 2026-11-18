@@ -1,0 +1,1803 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://gainsec.local/firmware-spider/event-schema.v1.json",
+ "title": "Firmware Spider telemetry event",
+ "schema_version": "fwspider.event.v1",
+ "description": "Canonical event schema + taxonomy shared by the Python (fwspider_telemetry) and Node (fwspider-telemetry.mjs) emitters. One JSON object per line in events/*.jsonl.",
+ "type": "object",
+ "required": [
+  "schema_version",
+  "event_id",
+  "ts",
+  "monotonic_ns",
+  "seq",
+  "level",
+  "event_type",
+  "component",
+  "host",
+  "pid",
+  "run_id",
+  "process_id",
+  "data"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "schema_version": {
+   "const": "fwspider.event.v1"
+  },
+  "event_id": {
+   "type": "string",
+   "pattern": "^ev_[0-9a-f]{32}$"
+  },
+  "ts": {
+   "type": "string",
+   "description": "UTC RFC3339 with microseconds and Z suffix",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+  },
+  "monotonic_ns": {
+   "type": "integer",
+   "description": "per-process monotonic clock; compare only within one process_id"
+  },
+  "seq": {
+   "type": "integer",
+   "minimum": 1,
+   "description": "per-run monotonic sequence allocated under the log-dir lock; unique per run_id across processes and restarts"
+  },
+  "level": {
+   "enum": [
+    "debug",
+    "info",
+    "notice",
+    "warning",
+    "error",
+    "critical"
+   ]
+  },
+  "event_type": {
+   "type": "string",
+   "description": "one of event_types"
+  },
+  "component": {
+   "type": "string"
+  },
+  "host": {
+   "type": "string"
+  },
+  "pid": {
+   "type": "integer"
+  },
+  "run_id": {
+   "type": "string",
+   "pattern": "^run_[0-9A-Za-z_-]+$"
+  },
+  "process_id": {
+   "type": "string",
+   "pattern": "^proc_[0-9a-f]{32}$"
+  },
+  "parent_event_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "campaign_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "job_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "model_call_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "tool_call_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "artifact_id": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "firmware/content artifact (e.g. sha256:<hex>, image id) - not a log artifact"
+  },
+  "finding_id": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "message": {
+   "type": "string"
+  },
+  "data": {
+   "type": "object",
+   "description": "sanitized payload; values pass the central redaction pipeline"
+  },
+  "log_artifacts": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   },
+   "description": "log artifact envelope refs (art_...) referenced by data"
+  },
+  "redaction": {
+   "type": "object",
+   "description": "present iff redaction occurred: {count, rules}",
+   "properties": {
+    "count": {
+     "type": "integer"
+    },
+    "rules": {
+     "type": "array"
+    }
+   }
+  },
+  "debug": {
+   "type": "boolean"
+  }
+ },
+ "correlation_fields": [
+  "run_id",
+  "process_id",
+  "parent_event_id",
+  "campaign_id",
+  "job_id",
+  "model_call_id",
+  "tool_call_id",
+  "artifact_id",
+  "finding_id"
+ ],
+ "levels": [
+  "debug",
+  "info",
+  "notice",
+  "warning",
+  "error",
+  "critical"
+ ],
+ "ledger_kind_domains": {
+  "campaign": "campaign",
+  "image": "image",
+  "job": "job",
+  "finding": "finding",
+  "validation": "validation",
+  "disposition-transition": "disposition",
+  "pending-action": "pending",
+  "budget": "budget",
+  "stage-gate": "stage",
+  "runtime-event": "runtime",
+  "checkpoint": "checkpoint",
+  "manifest": "manifest",
+  "report": "report",
+  "closeout-gate": "closeout",
+  "lineage": "lineage",
+  "applicability": "applicability",
+  "attack-chain": "attack_chain",
+  "wishlist": "wishlist",
+  "storage": "storage"
+ },
+ "event_types": {
+  "api.call": {
+   "level": "info",
+   "description": "operation started (sanitized arguments)",
+   "required_data": [
+    "operation"
+   ]
+  },
+  "api.error": {
+   "level": "warning",
+   "description": "operation raised (redacted exception, refused/failed)",
+   "required_data": [
+    "operation",
+    "exception"
+   ]
+  },
+  "api.result": {
+   "level": "info",
+   "description": "operation finished (duration, result digest)",
+   "required_data": [
+    "operation",
+    "duration_ms"
+   ]
+  },
+  "applicability.attach": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (applicability/attach); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "applicability.check": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (applicability/check); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "applicability.check_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (applicability/check_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "applicability.decide": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (applicability/decide); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "applicability.decision_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (applicability/decision_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "applicability.propagate": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (applicability/propagate); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "artifact.binary_describe": {
+   "level": "info",
+   "description": "binary/firmware object described by path/size/hashes/type/preview (no raw bytes)",
+   "required_data": [
+    "path",
+    "size",
+    "sha256"
+   ]
+  },
+  "artifact.write": {
+   "level": "debug",
+   "description": "bounded artifact envelope stored (sha256, lengths, truncation)",
+   "required_data": [
+    "artifact_ref",
+    "sha256",
+    "original_length",
+    "stored_length",
+    "truncated"
+   ]
+  },
+  "attack_chain.edge": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/edge); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "attack_chain.node": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/node); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "attack_chain.precondition": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/precondition); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "attack_chain.precondition_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/precondition_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "attack_chain.reuse": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/reuse); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "attack_chain.reuse_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (attack_chain/reuse_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "budget.block": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (budget/block); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "budget.raise": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (budget/raise); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "campaign.create": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (campaign/create); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "campaign.stop": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (campaign/stop); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "checkpoint.put": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (checkpoint/put); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "cli.error": {
+   "level": "warning",
+   "description": "CLI command refused/failed; error JSON digest recorded",
+   "required_data": [
+    "exit_code",
+    "error_type"
+   ]
+  },
+  "cli.invoke": {
+   "level": "info",
+   "description": "CLI command parsed (sanitized)",
+   "required_data": [
+    "command"
+   ]
+  },
+  "cli.result": {
+   "level": "info",
+   "description": "CLI command finished; stdout digest/length recorded",
+   "required_data": [
+    "exit_code",
+    "stdout_sha256",
+    "stdout_length"
+   ]
+  },
+  "closeout.blocked": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (closeout/blocked); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "closeout.pass": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (closeout/pass); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "config.load": {
+   "level": "info",
+   "description": "config source, effective (redacted) values, digest",
+   "required_data": [
+    "source",
+    "digest"
+   ]
+  },
+  "disposition.accepted": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (disposition/accepted); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "disposition.refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (disposition/refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "download.attempt": {
+   "level": "info",
+   "description": "download attempt started",
+   "required_data": [
+    "sha256",
+    "attempt"
+   ]
+  },
+  "download.bytes_verified": {
+   "level": "info",
+   "description": "size + sha256 verification of downloaded bytes",
+   "required_data": [
+    "sha256",
+    "size",
+    "ok"
+   ]
+  },
+  "download.challenge": {
+   "level": "debug",
+   "description": "PoW challenge received (token redacted)",
+   "required_data": []
+  },
+  "download.complete": {
+   "level": "notice",
+   "description": "COMPLETE.json written",
+   "required_data": []
+  },
+  "download.file_complete": {
+   "level": "info",
+   "description": "file moved into place and recorded in download-ledger",
+   "required_data": []
+  },
+  "download.file_failed": {
+   "level": "error",
+   "description": "all attempts failed; run aborts",
+   "required_data": []
+  },
+  "download.file_quarantine_bad": {
+   "level": "warning",
+   "description": "existing file failed verification and was renamed aside",
+   "required_data": []
+  },
+  "download.file_skip_valid": {
+   "level": "info",
+   "description": "existing file re-verified (size+sha256) and skipped",
+   "required_data": []
+  },
+  "download.part_discard": {
+   "level": "info",
+   "description": "partial .part file removed before attempt",
+   "required_data": []
+  },
+  "download.pow_solved": {
+   "level": "info",
+   "description": "PoW solved",
+   "required_data": []
+  },
+  "download.progress": {
+   "level": "debug",
+   "description": "progress.json updated",
+   "required_data": []
+  },
+  "download.retry": {
+   "level": "warning",
+   "description": "attempt failed; will retry",
+   "required_data": [
+    "sha256",
+    "attempt",
+    "error"
+   ]
+  },
+  "download.select": {
+   "level": "info",
+   "description": "rows selected for download",
+   "required_data": []
+  },
+  "download.snapshot": {
+   "level": "info",
+   "description": "export manifest snapshot written (rows, sha256, path)",
+   "required_data": []
+  },
+  "error.exception": {
+   "level": "error",
+   "description": "exception with redacted message, stack, cause chain, retry decision, correlation IDs",
+   "required_data": [
+    "exception"
+   ]
+  },
+  "finding.create": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (finding/create); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "finding.merge": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (finding/merge); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "finding.refuse": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (finding/refuse); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "image.ingest": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (image/ingest); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "job.cancel": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (job/cancel); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "job.claim": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (job/claim); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "job.enqueue": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (job/enqueue); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "job.fail": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (job/fail); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "job.succeed": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (job/succeed); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "ledger.unmapped": {
+   "level": "warning",
+   "description": "ledger kind/action without a taxonomy mapping (never dropped)",
+   "required_data": []
+  },
+  "lineage.algorithm_changed": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/algorithm_changed); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.analysis_receipt": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/analysis_receipt); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.candidate_rejected": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (lineage/candidate_rejected); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.code_unit": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/code_unit); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.delta_receipt": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/delta_receipt); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.edge": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/edge); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.edge_approved": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/edge_approved); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.edge_decision_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (lineage/edge_decision_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.edge_reevaluated": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/edge_reevaluated); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.edge_rejected": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/edge_rejected); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_approval_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_approval_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_approved": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_approved); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_created": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_created); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_extended": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_extended); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.family_rejected": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/family_rejected); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.fingerprints": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/fingerprints); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.pass": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/pass); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.plan": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/plan); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.representative": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/representative); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.reuse": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (lineage/reuse); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "lineage.reuse_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (lineage/reuse_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "log.retention_delete": {
+   "level": "notice",
+   "description": "segment removed by retention policy; index keeps tombstone + checksum",
+   "required_data": [
+    "segment",
+    "sha256"
+   ]
+  },
+  "log.rotate": {
+   "level": "notice",
+   "description": "active segment closed with checksum; new segment opened",
+   "required_data": [
+    "closed_segment",
+    "sha256"
+   ]
+  },
+  "manifest.put": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (manifest/put); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "model.call_end": {
+   "level": "info",
+   "description": "model call closed (status, attempts, total latency/tokens)",
+   "required_data": [
+    "status",
+    "attempts"
+   ]
+  },
+  "model.call_start": {
+   "level": "info",
+   "description": "model call opened (provider, model, endpoint alias, config, template, context refs)",
+   "required_data": [
+    "provider",
+    "model",
+    "endpoint_alias",
+    "template_version"
+   ]
+  },
+  "model.error": {
+   "level": "error",
+   "description": "model attempt failed (redacted exception)",
+   "required_data": [
+    "attempt",
+    "exception"
+   ]
+  },
+  "model.parse": {
+   "level": "info",
+   "description": "response parsed (ok/errors)",
+   "required_data": [
+    "ok"
+   ]
+  },
+  "model.request": {
+   "level": "info",
+   "description": "request body hashed + redacted artifact",
+   "required_data": [
+    "attempt",
+    "request_sha256",
+    "request_length",
+    "body_logged"
+   ]
+  },
+  "model.response": {
+   "level": "info",
+   "description": "response body hashed + redacted artifact, tokens, latency, finish status",
+   "required_data": [
+    "attempt",
+    "response_sha256",
+    "response_length",
+    "latency_ms",
+    "status",
+    "tokens",
+    "body_logged"
+   ]
+  },
+  "model.retry": {
+   "level": "warning",
+   "description": "model call retried (reason, attempt)",
+   "required_data": [
+    "attempt",
+    "reason"
+   ]
+  },
+  "model.tool_call": {
+   "level": "info",
+   "description": "model requested a tool call",
+   "required_data": [
+    "name",
+    "arguments_sha256"
+   ]
+  },
+  "model.tool_result": {
+   "level": "info",
+   "description": "tool call result linked to tool_call_id",
+   "required_data": [
+    "status",
+    "result_sha256"
+   ]
+  },
+  "monitor.check": {
+   "level": "info",
+   "description": "monitor tick started",
+   "required_data": []
+  },
+  "monitor.marker": {
+   "level": "info",
+   "description": "remote marker file touched",
+   "required_data": []
+  },
+  "monitor.notify": {
+   "level": "notice",
+   "description": "operator notification emitted on stdout",
+   "required_data": [
+    "kind",
+    "message_sha256"
+   ]
+  },
+  "monitor.state": {
+   "level": "info",
+   "description": "remote state observed",
+   "required_data": [
+    "state"
+   ]
+  },
+  "monitor.unreachable": {
+   "level": "warning",
+   "description": "Spark unreachable",
+   "required_data": []
+  },
+  "monitor.verify": {
+   "level": "notice",
+   "description": "remote verification result",
+   "required_data": [
+    "exit_code"
+   ]
+  },
+  "net.error": {
+   "level": "warning",
+   "description": "HTTP failure (will retry or raise)",
+   "required_data": [
+    "url",
+    "error"
+   ]
+  },
+  "net.request": {
+   "level": "debug",
+   "description": "HTTP request (sanitized URL)",
+   "required_data": [
+    "method",
+    "url"
+   ]
+  },
+  "net.response": {
+   "level": "debug",
+   "description": "HTTP response status/latency",
+   "required_data": [
+    "status",
+    "latency_ms"
+   ]
+  },
+  "pending.open": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (pending/open); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "pending.reopen": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (pending/reopen); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "pending.resolve": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (pending/resolve); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "process.crash": {
+   "level": "critical",
+   "description": "process terminated by an unhandled exception",
+   "required_data": [
+    "exception"
+   ]
+  },
+  "process.end": {
+   "level": "info",
+   "description": "process finished (exit status, duration, telemetry failure count)",
+   "required_data": [
+    "exit_code",
+    "duration_ms"
+   ]
+  },
+  "process.resume": {
+   "level": "notice",
+   "description": "a new process joined an existing run_id (restart/resume); sequence continues",
+   "required_data": []
+  },
+  "process.signal": {
+   "level": "warning",
+   "description": "process received a termination/interrupt signal",
+   "required_data": []
+  },
+  "process.start": {
+   "level": "info",
+   "description": "process began emitting telemetry for a run (sanitized argv, env allowlist+digest, runtime)",
+   "required_data": [
+    "argv",
+    "env"
+   ]
+  },
+  "report.draft": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (report/draft); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "run.end": {
+   "level": "info",
+   "description": "explicit run close with final status",
+   "required_data": [
+    "status"
+   ]
+  },
+  "run.start": {
+   "level": "info",
+   "description": "first event of a run; manifest created",
+   "required_data": []
+  },
+  "runtime.migrate": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (runtime/migrate); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "runtime.resume": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (runtime/resume); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "runtime.submission_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (runtime/submission_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "scenario.check": {
+   "level": "info",
+   "description": "scenario assertion result",
+   "required_data": []
+  },
+  "scenario.end": {
+   "level": "info",
+   "description": "scenario finished",
+   "required_data": []
+  },
+  "scenario.start": {
+   "level": "info",
+   "description": "scenario started",
+   "required_data": []
+  },
+  "scenario.step": {
+   "level": "info",
+   "description": "scenario step",
+   "required_data": []
+  },
+  "stage.advance": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (stage/advance); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "stage.deep_select_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (stage/deep_select_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "stage.escalation_approval_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (stage/escalation_approval_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "stage.escalation_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (stage/escalation_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "stage.refuse": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (stage/refuse); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "state.close": {
+   "level": "debug",
+   "description": "store closed",
+   "required_data": []
+  },
+  "state.commit": {
+   "level": "debug",
+   "description": "transaction committed with N ledger entries",
+   "required_data": [
+    "ledger_entries"
+   ]
+  },
+  "state.migrate": {
+   "level": "notice",
+   "description": "additive schema migration performed",
+   "required_data": []
+  },
+  "state.open": {
+   "level": "info",
+   "description": "store opened (schema version, migration)",
+   "required_data": [
+    "path"
+   ]
+  },
+  "state.open_refused": {
+   "level": "error",
+   "description": "store refused (IncompatibleStoreError); file untouched",
+   "required_data": []
+  },
+  "state.rollback": {
+   "level": "warning",
+   "description": "transaction rolled back; buffered ledger events discarded and listed",
+   "required_data": [
+    "discarded"
+   ]
+  },
+  "storage.action_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/action_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.apply": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/apply); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.apply_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/apply_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.config_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/config_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.dedup": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/dedup); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.hold": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/hold); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.intent": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/intent); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.pin": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/pin); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.plan": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/plan); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.plan_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/plan_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.pressure_change": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/pressure_change); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.purge": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/purge); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.purge_intent": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/purge_intent); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.purge_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/purge_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.quarantine": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/quarantine); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.quarantine_intent": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/quarantine_intent); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.quarantine_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/quarantine_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.recover": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/recover); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.reference": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/reference); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.register": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/register); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.register_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/register_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.release": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/release); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.restore": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/restore); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.restore_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (storage/restore_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.root_configure": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/root_configure); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.sample": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/sample); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "storage.thresholds_configure": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (storage/thresholds_configure); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "telemetry.deadletter_recovered": {
+   "level": "notice",
+   "description": "dead-lettered events re-imported into the stream",
+   "required_data": []
+  },
+  "telemetry.debug": {
+   "level": "debug",
+   "description": "debug detail record (only in debug mode)",
+   "required_data": []
+  },
+  "telemetry.failure": {
+   "level": "error",
+   "description": "telemetry write failed; event dead-lettered (never silently dropped)",
+   "required_data": []
+  },
+  "tool.end": {
+   "level": "info",
+   "description": "finished (exit code, duration, stdout/stderr refs)",
+   "required_data": [
+    "exit_code",
+    "duration_ms",
+    "stdout",
+    "stderr"
+   ]
+  },
+  "tool.error": {
+   "level": "error",
+   "description": "failed to start or raised",
+   "required_data": [
+    "exception"
+   ]
+  },
+  "tool.start": {
+   "level": "info",
+   "description": "tool or subprocess started (sanitized argv, cwd, env allowlist+digest)",
+   "required_data": [
+    "tool",
+    "argv"
+   ]
+  },
+  "tool.timeout": {
+   "level": "error",
+   "description": "killed after timeout",
+   "required_data": [
+    "timeout_s"
+   ]
+  },
+  "validation.accepted": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (validation/accepted); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "validation.refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (validation/refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "verify.abort": {
+   "level": "error",
+   "description": "verification aborted before a result (missing manifest / count mismatch)",
+   "required_data": []
+  },
+  "verify.file_error": {
+   "level": "warning",
+   "description": "file missing/size/sha256 mismatch",
+   "required_data": [
+    "sha256",
+    "error"
+   ]
+  },
+  "verify.file_ok": {
+   "level": "debug",
+   "description": "file size+sha256 verified",
+   "required_data": []
+  },
+  "verify.partial_files": {
+   "level": "warning",
+   "description": ".part files present",
+   "required_data": []
+  },
+  "verify.progress": {
+   "level": "info",
+   "description": "periodic progress",
+   "required_data": []
+  },
+  "verify.result": {
+   "level": "notice",
+   "description": "final verification result",
+   "required_data": [
+    "status",
+    "verified",
+    "files"
+   ]
+  },
+  "verify.snapshot": {
+   "level": "info",
+   "description": "manifest snapshot selected",
+   "required_data": []
+  },
+  "verify.start": {
+   "level": "info",
+   "description": "verification started",
+   "required_data": []
+  },
+  "verify.write": {
+   "level": "info",
+   "description": "VERIFIED.json written atomically",
+   "required_data": []
+  },
+  "wishlist.dedup": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (wishlist/dedup); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.reopen": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (wishlist/reopen); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.request": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (wishlist/request); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.request_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (wishlist/request_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.resolve": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (wishlist/resolve); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.resolve_refused": {
+   "level": "warning",
+   "description": "ArcticBase ledger-derived state transition (wishlist/resolve_refused); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "wishlist.revisit": {
+   "level": "info",
+   "description": "ArcticBase ledger-derived state transition (wishlist/revisit); emitted after commit",
+   "required_data": [
+    "ledger_kind",
+    "ledger_action",
+    "ledger_seq",
+    "entry_hash"
+   ]
+  },
+  "worker.idle": {
+   "level": "debug",
+   "description": "no claimable job",
+   "required_data": []
+  },
+  "worker.run_end": {
+   "level": "info",
+   "description": "adapter output submitted",
+   "required_data": [
+    "accepted"
+   ]
+  },
+  "worker.run_error": {
+   "level": "warning",
+   "description": "adapter raised; failure recorded as data",
+   "required_data": [
+    "exception"
+   ]
+  },
+  "worker.run_start": {
+   "level": "info",
+   "description": "claimed job handed to adapter",
+   "required_data": [
+    "worker_id"
+   ]
+  }
+ },
+ "artifact_envelope": {
+  "schema_version": "fwspider.artifact.v1",
+  "required": [
+   "schema_version",
+   "artifact_ref",
+   "kind",
+   "created_at",
+   "run_id",
+   "content_type",
+   "sha256",
+   "original_length",
+   "stored_length",
+   "stored_sha256",
+   "truncated",
+   "max_bytes",
+   "redaction",
+   "body"
+  ],
+  "notes": "sha256/original_length describe the full REDACTED content; stored_* describe the bounded body actually kept. truncated=true is always explicit."
+ },
+ "run_manifest": {
+  "schema_version": "fwspider.run-manifest.v1",
+  "required": [
+   "schema_version",
+   "run_id",
+   "created_at",
+   "updated_at",
+   "status",
+   "processes",
+   "segments",
+   "events",
+   "inputs",
+   "outputs"
+  ]
+ },
+ "segment_index": {
+  "schema_version": "fwspider.segment-index.v1",
+  "required": [
+   "segment",
+   "file",
+   "sha256",
+   "bytes",
+   "uncompressed_sha256",
+   "uncompressed_bytes",
+   "events",
+   "runs",
+   "compressed",
+   "status"
+  ]
+ }
+}
